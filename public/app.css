@@ -1,14 +1,5 @@
-body {
-  background-color: whitesmoke !important;
-}
-
-.form-holder {
-  margin-top: 20%;
-  margin-bottom: 20%;
-}
-
 .navbar {
-  background-color: #f5faff;
+  background-color: #f8f9fa;
   /* Customize the background color */
   padding: 10px;
   /* Adjust the padding as desired */
@@ -29,9 +20,6 @@ body {
 .navbar-nav .nav-item.active .nav-link {
   font-weight: bold;
   /* Customize the font weight of the active link */
-
-
-
 }
 
 .corner-button {
@@ -50,7 +38,6 @@ body {
   padding: 5px 5px;
   /* Add padding to the button */
 
-
 }
 
 .btn-close {
@@ -60,56 +47,29 @@ body {
   position: absolute;
   right: 31px;
   top: 700px;
-
-
 }
 
 .open {
   display: block !important;
 }
 
-
-
-
-/* Style for the confirmation modal */
-.confirmation-modal {
-  background-color: #ffffff;
-  border-radius: 5px;
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  text-align: center;
+body {
+  background-color: whitesmoke !important;
 }
 
-/* Style for the buttons in the modal */
-.confirmation-modal button {
-  margin-top: 10px;
+.form-holder {
+  margin-top: 20%;
+  margin-bottom: 20%;
 }
 
-/* Style for the cancel button */
-.confirmation-modal .cancel-btn {
-  background-color: #ddd;
-  color: #333;
+/* Custom CSS */
+.nav-item {
+  position: relative;
 }
 
-/* Style for the delete button */
-.confirmation-modal .delete-btn {
-  background-color: #e74c3c;
-  color: #fff;
-}
-
-.btn-close {
-  background-color: transparent;
-  border: 0;
-  font-size: 10px;
+.corner-text {
   position: absolute;
-  right: 31px;
-  top: 700px;
-
-
-}
-
-.open {
-  display: block !important;
+  top: 0;
+  /* Change "right" to "left" */
+  left: 0;
 }

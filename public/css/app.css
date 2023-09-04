@@ -1,7 +1,60 @@
-body{
- background-color: whitesmoke !important ;   
+
+
+
+
+  .navbar {
+    background-color: #f8f9fa; /* Customize the background color */
+    padding: 10px; /* Adjust the padding as desired */
+  }
+
+  .navbar-brand {
+    font-weight: bold; /* Customize the font weight */
+    color:#333 ; /* Customize the text color */
+  }
+
+  .navbar-nav .nav-link {
+    color: #333; /* Customize the text color of the links */
+  }
+
+  .navbar-nav .nav-item.active .nav-link {
+    font-weight: bold; /* Customize the font weight of the active link */
+
+
+    
+  }
+  .corner-button {
+      position: absolute;
+
+      right: 10px;
+    }
+    .custom-button {
+  background-color: whitesmoke; /* Set the background color */
+  color: #fff; /* Set the text color */
+  border: none; /* Remove the border */
+  padding: 5px 5px; /* Add padding to the button */
+
+  
 }
-.form-holder{
-margin-top:20% ;
-margin-bottom:20% ;
-}
+ .btn-close{
+       background-color: transparent;
+       border: 0;
+       font-size: 10px;
+       position: absolute;
+       right :31px;
+       top :700px;
+
+
+    }
+ 
+    .open {
+        display: block !important;
+    }
+    body{
+      background-color: whitesmoke !important ;   
+     }
+     .form-holder{
+     margin-top:20% ;
+     margin-bottom:20% ;
+     }
+
+     

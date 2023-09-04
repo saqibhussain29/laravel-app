@@ -1,15 +1,17 @@
-@extends('layout.app')
+
+
+@extends('layout.masterlayout')
 @section('content')
     <div class="container">
         <div class="row">
             <div class="col-md-4 offset-md-4">
                 <div class="card form-holder">
                     <div class="card-body  text-center ">
-                        <h1 class="mb-3">User </h1>
+                        <h1 class="mb-3">Admin </h1>
                         @if (Session::has('error'))
                             <p class="text-danger">{{ session::get('error') }}</p>
                         @endif
-                        <form action="{{ route('register') }}" method="POST">
+                        <form action="{{ route('admin') }}" method="POST">
                             @csrf
                             @method('POST')
                             <div class="form-group">
@@ -26,7 +28,18 @@
                                     <p class="text-danger">{{ $errors->first('email') }}</p>
                                 @endif
                             </div>
-                           
+                            <div class="form-group">
+                                <label for="class">Roll</label>
+                                <select class="form-select" name="roll">
+                                    <option selected disabled>Select roll</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                   
+                                </select>
+                                @if ($errors->has('roll'))
+                                    <p class="text-danger">{{ $errors->first('roll') }}</p>
+                                @endif
+                            </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Password</label>
                                 <input type="password" class="form-control" name="password">
