@@ -12,11 +12,11 @@
                 @csrf
                 @method('PUT')
                 <div class="my-3 text-center">
-                    <h1 class="text-uppercase mb-2 font-weight-bold text-primary">Sheet</h1>
+                    <h1 class="text-uppercase mb-2 font-weight-bold text-primary">Student form</h1>
                 </div>
                 <div class="my-2">
                     <label for="name">Name</label>
-                    <input type="text" name="name" value="{{ $student->name }}" class="form-control">
+                    <input type="text" name="name" value="{{ $student->name }}" class="form-control"  value=" old{{'name'}}"   >
                     @if ($errors->has('name'))
                         <p class="text-danger">{{ $errors->first('name') }}</p>
                     @endif
@@ -39,9 +39,9 @@
                     <label for="class">Class</label>
                     <select class="form-select" name="class">
                         <option disabled>Select Class</option>
-                        <option value="1" {{ $student->class == 'One' ? 'selected' : '' }}>One</option>
-                        <option value="2" {{ $student->class == 'two' ? 'selected' : '' }}>Two</option>
-                        <option value="3" {{ $student->class == 'three' ? 'selected' : '' }}>Three</option>
+                        <option value="One" {{ $student->class == 'One' ? 'selected' : '' }}>One</option>
+                        <option value="Two" {{ $student->class == 'two' ? 'selected' : '' }}>Two</option>
+                        <option value="Three" {{ $student->class == 'three' ? 'selected' : '' }}>Three</option>
                     </select>
                     @if ($errors->has('class'))
                         <p class="text-danger">{{ $errors->first('class') }}</p>

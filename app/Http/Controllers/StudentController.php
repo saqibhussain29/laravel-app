@@ -122,7 +122,7 @@ class StudentController extends Controller
       'address' => 'required',
       'school' => 'required',
       'contact' => 'required',
-      'image' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Change 'required' to 'nullable'
+      // 'image' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Change 'required' to 'nullable'
     ]);
 
     $studentData = [
@@ -133,19 +133,29 @@ class StudentController extends Controller
       'address' => $request->address,
       'school' => $request->school,
       'contact' => $request->contact,
+      
     ];
 
+    $student = Student::find($id);
+    $currentImagePath = $student->image;
+
     if ($request->hasFile('image')) {
-      $imagePath = $request->file('image')->store('public/images');
-      $studentData['image'] = $imagePath;
+        // Delete the old image if it exists
+        if ($currentImagePath) {
+            Storage::delete($currentImagePath);
+        }
+
+        // Store and update the new image path
+        $imagePath = $request->file('image')->store('images');
+        $studentData['image'] = $imagePath;
     }
 
     // Update the student's data based on their id
-    student::where('id', $id)->update($studentData);
+    Student::where('id', $id)->update($studentData);
     session()->flash('success');
 
     return redirect('home');
-  }
+}
 
 
  

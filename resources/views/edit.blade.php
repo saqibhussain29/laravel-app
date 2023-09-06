@@ -27,15 +27,15 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Email address</label>
+                            <label for="exampleInputEmail1">Email Address</label>
                             <input type="email" class="form-control" id="exampleInputEmail1" name="email"
                                 value="{{ $user->email }}">
                             @if ($errors->has('email'))
                                 <p class="text-danger">{{ $errors->first('email') }}</p>
                             @endif
                         </div>
-                        <div class="col-4 text-center my-3">
-                            <input type="submit" class="btn btn-primary" value="Update">
+                        <div class="text-center m-5">
+                            <input type="submit" name="submit" value="update" class="btn btn-primary w-75">
                         </div>
                     </form>
 

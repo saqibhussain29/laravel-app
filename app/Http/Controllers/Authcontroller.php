@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use PharIo\Manifest\Email;
+
 class AuthController extends Controller
 {
     public function index()
@@ -15,31 +16,33 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required',
-        'password' => 'required',
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
 
-    ]);
-         
-       $user = User::where('email',$request->email)->first();
-    if ($user->roll === null ) {
-        Auth::logout();
-        return redirect()->route('login')->with('error', 'Your role is not set. Please contact the administrator.');
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // User with the provided email does not exist
+            return redirect()->route('login')->with('errorss', 'User with this email does not exist.');
+        }
+
+        if ($user->status === 1) {
+            Auth::logout();
+            return redirect()->route('login')->with('su', 'Your role is not set. Please contact the administrator.');
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return redirect('home');
+        }
     }
 
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-
-        
-        return redirect('home');
-    }
-
-    return redirect()->route('login')->with('error', 'Invalid credentials');
-}
-//////////////
     // @if (auth()->check() && auth()->user()->roll ==='Admin')
     public function register_view()
     {
@@ -60,10 +63,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
 
         ]);
-            return redirect('login');
-    
-
-     
+        // session()->flash('errors');
+        return redirect()->route('login')->with('su', 'please wait for Admin approval');
     }
 
     public function home()
@@ -78,5 +79,4 @@ class AuthController extends Controller
 
         return redirect('/');
     }
- 
 }

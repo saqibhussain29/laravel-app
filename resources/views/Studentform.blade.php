@@ -13,32 +13,32 @@
                 @method('post')
 
                 <div class="my-3 text-center">
-                    <h1 class="text-uppercase mb-2 font-weight-bold text-primary">student form </h1>
+                    <h1 class="text-uppercase mb-2 font-weight-bold text-primary">Student form </h1>
                 </div>
                 <div class="my-2">
                     <label for="name">Name</label>
-                    <input type="text" name="name" class="form-control">
+                    <input type="text" name="name" class="form-control"   value="{{ old('name') }}"    >
                     @if ($errors->has('name'))
                         <p class="text-danger">{{ $errors->first('name') }}</p>
                     @endif
                 </div>
                 <div class="my-2">
                     <label for="father_name">Father Name</label>
-                    <input type="text" name="father_name" class="form-control">
+                    <input type="text" name="father_name" class="form-control"  value="{{ old('father_name') }}"   >
                     @if ($errors->has('father_name'))
                         <p class="text-danger">{{ $errors->first('father_name') }}</p>
                     @endif
                 </div>
                 <div class="my-2">
                     <label for="mother_name">Mother Name</label>
-                    <input type="text" name="mother_name" class="form-control">
+                    <input type="text" name="mother_name" class="form-control   "   value="{{ old('mother_name') }}"   >
                     @if ($errors->has('mother_name'))
-                        <p class="text-danger">{{ $errors->first('mother_name') }}</p>
+                        <p class="text-danger">{{ $errors->first('mother_name') }}       </p>
                     @endif
                 </div>
                 <div class="my-2">
                     <label for="class">Class</label>
-                    <select class="form-select" name="class">
+                    <select class="form-select" name="class"  value="{{ old('class') }}"     >
                         <option selected disabled>Select Class</option>
                         <option value="one">One</option>
                         <option value="two">Two</option>
@@ -50,22 +50,22 @@
                 </div>
                 <!-- Continue with other form fields -->
                 <div class="my-2">
-                    <label for="contact">address</label>
-                    <input type="text" name="address" class="form-control">
+                    <label for="contact">Address</label>
+                    <input type="text" name="address" class="form-control"  value="{{ old('address') }}"     >
                     @if ($errors->has('address'))
                         <p class="text-danger">{{ $errors->first('address') }}</p>
                     @endif
                 </div>
                 <div class="my-2">
-                    <label for="contact">school</label>
-                    <input type="text" name="school" class="form-control">
+                    <label for="contact">School</label>
+                    <input type="text" name="school" class="form-control"   value="{{ old('school') }}"  >
                     @if ($errors->has('school'))
                         <p class="text-danger">{{ $errors->first('school') }}</p>
                     @endif
                 </div>
                 <div>
                     <label for="contact">Contact Number</label>
-                    <input type="text" name="contact" class="form-control">
+                    <input type="text" name="contact" class="form-control"  value="{{ old('contact') }}"   >
                     @if ($errors->has('contact'))
                         <p class="text-danger">{{ $errors->first('contact') }}</p>
                     @endif

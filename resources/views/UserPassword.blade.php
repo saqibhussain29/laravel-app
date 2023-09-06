@@ -41,8 +41,8 @@
                             <label>confirm password</label>
                             <input type="password" class="form-control" name="password_confirmation">
                         </div>
-                        <div class="col-4 text-center my-3">
-                            <input type="submit" class="btn btn-primary" value="Update">
+                        <div class="text-center m-5">
+                            <input type="submit" name="submit" value="update" class="btn btn-primary w-75">
                         </div>
                     </form>
 

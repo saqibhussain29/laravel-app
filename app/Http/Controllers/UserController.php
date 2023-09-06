@@ -96,24 +96,23 @@ class UserController extends Controller
         }
     }
     public function loginUpdate(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|max:255',
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|max:252',
+    ]);
 
-        ]);
+    $studentData = [
+        'name' => $request->name,
+        'email' => $request->email,
+    ];
 
-        $studentData = [
-            'name' => $request->name,
-            'email' => $request->email,
+ 
+    User::where('id', $id)->update($studentData);
+    session()->flash('success');
+    return redirect('UserHome');
+}
 
-        ];
-
-        // Update the student's data based on their id
-        User::where('id', $id)->update($studentData);
-        session()->flash('success');
-        return redirect('UserHome');
-    }
 
     public function deleteMultiple(Request $request)
 {
@@ -133,19 +132,49 @@ class UserController extends Controller
 
 
 
+// public function loginUpdatessssss(Request $request, $id)
+// {
+//     $request->validate([
+//         'name' => 'required',
+//         'email' => 'required|email|max:255',
+//         'roll' => 'required',
+//         'status'=> 'required',
+//     ]);
+
+//     $studentData = [
+//         'name' => $request->name,
+//         'email' => $request->email,
+//         'roll' => $request->roll,
+//         'status' => $request->status,
+
+//     ];
+
+    // Update the student's data based on their id
+//     User::where('id', $id)->update($studentData);
+//     session()->flash('success');
+//     return redirect('UserHome');
+// }
+
 public function loginUpdates(Request $request, $id)
 {
     $request->validate([
         'name' => 'required',
         'email' => 'required|email|max:255',
         'roll' => 'required',
-
+        'status' => 'required',
     ]);
+
+    $newEmail = $request->email;
+
+    if (User::where('email', $newEmail)->where('id', '!=', $id)->exists()) {    
+        return redirect()->back()->with('errord','Email address is already in use.');
+    }
 
     $studentData = [
         'name' => $request->name,
-        'email' => $request->email,
+        'email' => $newEmail, // Use the validated email here
         'roll' => $request->roll,
+        'status' => $request->status,
     ];
 
     // Update the student's data based on their id
@@ -155,15 +184,11 @@ public function loginUpdates(Request $request, $id)
 }
 
 
-
 public function loginDetails($id)
 {
     $user = User::find($id);
     return view('useredit', compact('user'));
 }
-
-
-  
 
 public function status($id)
 {

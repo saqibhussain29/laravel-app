@@ -65,14 +65,14 @@
                     <table class="table table-bordered text-center align-middle mt-3">
                         <thead>
                             <tr>
-                                <th scope="col">Category ID</th>
+                                <th scope="col">Student ID</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Father Name</th>
                                 <th scope="col">Mother Name</th>
                                 <th scope="col">Class</th>
                                 <th scope="col">Address</th>
-                                <th scope="col">school</th>
-                                <th scope="col">contact no</th>
+                                <th scope="col">School</th>
+                                <th scope="col">Contact no</th>
                                 <th scope="col">Image</th>
                                 <th scope="col">Action</th>
                                 <th scope="col">Show</th>
