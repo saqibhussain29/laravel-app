@@ -4,38 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Users;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Monolog\Handler\IFTTTHandler;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class UserController extends Controller
 {
-    // Show all users
-    public function UserShow()
-    {
 
-        $users = User::select('id', 'name', 'email','roll' , 'status' )->get();
-        return view('UserHome', compact('users'));
-    }
 
-    // Search for users by name and/or email
-    public function searches(Request $request)
+    public function  searches(Request $request)
     {
-        $query = User::query();
-    
-        if ($request->ajax()){
-            $search = $request->input('name'); // Assuming you're searching by name
-            $users = $query
-                ->where('name', 'LIKE', '%' . $search . '%')
-                ->orWhere('email', 'LIKE', '%' . $search . '%')
-                ->get();
-            return response()->json(['users' => $users]);
+        $query = Users::query();
+
+
+        $name = $request->input('name');
+        $email =$request->input('email');
+         // Assuming you're searching by name
+         session(['name' => $name]);
+         session(['email' => $email]);
+       
+            
+            if ($name) {
+                $query->where('name', 'LIKE', '%' . $name . '%');
+            }
+        
+            if ($email) {
+                $query->orWhere('email', 'LIKE', '%' . $email . '%');
+            }
+        
+             $users = $query->paginate(3)->withQueryString();
+            
+        if ($request->ajax()) {
+            return response()->json(['users' => $users->items(), 'pagination' => $users->links('pagination::bootstrap-5')->toHtml()]);
         } else {
-            $users = $query->get();
+            // Handle non-AJAX requests
+            // $students = $query->paginate(3);
             return view('UserHome', compact('users'));
         }
     }
-    
+
     public function DeleteUser($id)
     {
         // Find the user to be deleted
@@ -96,117 +106,96 @@ class UserController extends Controller
         }
     }
     public function loginUpdate(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|max:252',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|max:252',
+        ]);
 
-    $studentData = [
-        'name' => $request->name,
-        'email' => $request->email,
-    ];
+        $studentData = [
+            'name' => $request->name,
+            'email' => $request->email,
+        ];
 
- 
-    User::where('id', $id)->update($studentData);
-    session()->flash('success');
-    return redirect('UserHome');
-}
+
+        User::where('id', $id)->update($studentData);
+        session()->flash('success');
+        return redirect('UserHome');
+    }
 
 
     public function deleteMultiple(Request $request)
-{
-    $selectedUserIds = $request->input('selected_records', []);
-    
-    // Get the ID of the currently authenticated user
-    $currentUserId = auth()->user()->id;
+    {
+        $selectedUserIds = $request->input('selected_records', []);
 
-    // Remove the current user's ID from the list of selected IDs
-    $selectedUserIds = array_diff($selectedUserIds, [$currentUserId]);
-    
-    // Delete the selected users
-    User::whereIn('id', $selectedUserIds)->delete();
-    
-    return redirect()->back()->with('hello', 'Selected users have been deleted.');   
-}
+        // Get the ID of the currently authenticated user
+        $currentUserId = auth()->user()->id;
 
+        // Remove the current user's ID from the list of selected IDs
+        $selectedUserIds = array_diff($selectedUserIds, [$currentUserId]);
 
+        // Delete the selected users
+        User::whereIn('id', $selectedUserIds)->delete();
 
-// public function loginUpdatessssss(Request $request, $id)
-// {
-//     $request->validate([
-//         'name' => 'required',
-//         'email' => 'required|email|max:255',
-//         'roll' => 'required',
-//         'status'=> 'required',
-//     ]);
-
-//     $studentData = [
-//         'name' => $request->name,
-//         'email' => $request->email,
-//         'roll' => $request->roll,
-//         'status' => $request->status,
-
-//     ];
-
-    // Update the student's data based on their id
-//     User::where('id', $id)->update($studentData);
-//     session()->flash('success');
-//     return redirect('UserHome');
-// }
-
-public function loginUpdates(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|max:255',
-        'roll' => 'required',
-        'status' => 'required',
-    ]);
-
-    $newEmail = $request->email;
-
-    if (User::where('email', $newEmail)->where('id', '!=', $id)->exists()) {    
-        return redirect()->back()->with('errord','Email address is already in use.');
+        return redirect()->back()->with('hello', 'Selected users have been deleted.');
     }
 
-    $studentData = [
-        'name' => $request->name,
-        'email' => $newEmail, // Use the validated email here
-        'roll' => $request->roll,
-        'status' => $request->status,
-    ];
-
-    // Update the student's data based on their id
-    User::where('id', $id)->update($studentData);
-    session()->flash('success');
-    return redirect('UserHome');
-}
 
 
-public function loginDetails($id)
-{
-    $user = User::find($id);
-    return view('useredit', compact('user'));
-}
+    //
 
-public function status($id)
-{
-    $user = User::find($id);
+    public function loginUpdates(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|max:255',
+            'roll' => 'required',
+            'status' => 'required',
+        ]);
 
-    // Check if the current user is not the same as the user being modified
-    if ($user->id !== auth()->user()->id){
-        if ($user->status === 1) {
-            $user->status = 0; session()->flash('active');          
-        } else {
-            $user->status = 1;session()->flash('inactive');
+        $newEmail = $request->email;
+
+        if (User::where('email', $newEmail)->where('id', '!=', $id)->exists()) {
+            return redirect()->back()->with('errord', 'Email address is already in use.');
         }
-            
-        $user->save();
+
+        $studentData = [
+            'name' => $request->name,
+            'email' => $newEmail, // Use the validated email here
+            'roll' => $request->roll,
+            'status' => $request->status,
+        ];
+
+        // Update the student's data based on their id
+        User::where('id', $id)->update($studentData);
+        session()->flash('success');
+        return redirect('UserHome');
     }
-    // dd($user->status);
-    return redirect('UserHome');
-}
 
 
+    public function loginDetails($id)
+    {
+        $user = User::find($id);
+        return view('useredit', compact('user'));
+    }
+
+    public function status($id)
+    {
+        $user = User::find($id);
+
+        // Check if the current user is not the same as the user being modified
+        if ($user->id !== auth()->user()->id) {
+            if ($user->status === 1) {
+                $user->status = 0;
+                session()->flash('active');
+            } else {
+                $user->status = 1;
+                session()->flash('inactive');
+            }
+
+            $user->save();
+        }
+        // dd($user->status);
+        return redirect('UserHome');
+    }
 }

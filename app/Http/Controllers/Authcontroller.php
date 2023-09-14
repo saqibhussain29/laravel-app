@@ -41,6 +41,9 @@ class AuthController extends Controller
             $user = Auth::user();
             return redirect('home');
         }
+        else{
+            return redirect()->route('login')->with('errorsss', 'Invalid password. Please try again.');
+        }
     }
 
     // @if (auth()->check() && auth()->user()->roll ==='Admin')

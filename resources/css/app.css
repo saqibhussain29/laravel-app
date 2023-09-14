@@ -52,7 +52,9 @@ body {
 
 
 }
-
+/* .row{
+  display: none;
+} */
 .btn-close {
   background-color: transparent;
   border: 0;

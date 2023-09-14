@@ -6,9 +6,9 @@ use App\Http\Controllers\EditController;
 use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UpdateController;
+
 use App\Http\Controllers\UserController;
+// use Illuminate\Pagination\Paginator;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('show{id}', [StudentController::class, 'update'])->name('show');
     Route::put('show/{id}', [StudentController::class, 'edit'])->name('show');
     Route::get('deletes{id}', [StudentController::class, 'remove'])->name('deletes');
+    Route::post('/student/delete-multiple', [StudentController::class, 'deleteMultiple'])->name('student.deleteMultiple');
+
     Route::get('detail{id}', [StudentController::class, 'detail'])->name('detail');
     // Making user controller for update and edit or delete   //   
     Route::get('/edit/{id}', [UserController::class, 'loginDetail'])->name('user.edit');
@@ -54,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/user{id}', [UserController::class, 'UserDetail'])->name('user');
     Route::middleware(['roles:Admin'])->group(function () {
-        Route::get('UserHome', [UserController::class, 'UserShow'])->name('UserHome');
+        Route::get('UserHome', [UserController::class, 'searches'])->name('UserHome');
         Route::get('searches', [UserController::class, 'searches'])->name('searches');
         Route::get('/useredit/{id}', [UserController::class, 'loginDetails'])->name('useredit');
         Route::post('useredit/{id}', [UserController::class, 'loginUpdates'])->name('useredit');

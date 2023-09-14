@@ -13,25 +13,23 @@
             <form class="example" action="{{ route('searches') }}" method="get">
                 <div class="m-3">
                     <label for=""> Name</label>
-                    <input type="text" name="name" id="namesearch" class="form-control" value="">
+                    <input type="text" name="name" id="namesearch" class="form-control" value="{{ session('name') }}">
                 </div>
                 <div class="m-3">
                     <label for=""> Email</label>
-                    <input type="text" name="email" id="emailsearch" class="form-control" value="">
+                    <input type="text" name="email" id="emailsearch" class="form-control" value="{{ session('email') }}">
                 </div>
-
                 <div class="d-flex justify-content-end m-3">
                     <a href="{{ url('/UserHome') }}" class="btn btn-primary m-2">RESET</a>
-                    <button type="button" id="searchess" name="search" class="btn btn-primary m-2">search</button>
+                    <button type="button" name="search" id="searchess" class="btn btn-primary m-2">search</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div class="my-5 text-center">
-        <h1 class="text-uppercase mb-5 font-weight-bold text-primary">User result</h1>
+        <h1 class="text-uppercase mb-5 font-weight-bold text-primary">show result</h1>
     </div>
-
     @if (session('hello'))
         <div class="alert alert-dark   m-5   " role="alert">
             <b>Data was deleted</b>
@@ -39,11 +37,11 @@
         </div>
     @endif
     @if (session('success'))
-    <div class="alert alert-success   m-5   " role="alert">
-        <b>Data was updatde</b>
+        <div class="alert alert-success   m-5   " role="alert">
+            <b>Data was updatde</b>
 
-    </div>
-@endif
+        </div>
+    @endif
     @if (session('error'))
         <div class="alert alert-danger  m-5   " role="alert">
             <b>You Are currently login with this data </b>
@@ -65,11 +63,10 @@
         <div class="row justify-content-center m-5">
             <div class="col-26">
                 <div class="card shadow">
-                    <div class="table-responsive">
-                        <table class="table table-bordered text-center align-middle mt-3">
-
-                            <form action="{{ route('users.deleteMultiple') }}" method="post">
-                                @csrf
+                    <form action="{{ route('users.deleteMultiple') }}" method="post">
+                        @csrf
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center align-middle mt-3">
                                 <thead>
                                     <tr>
                                         <th><button type="submit" class="btn btn-danger">Delete</button></th>
@@ -80,14 +77,11 @@
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
                                         <th scope="col">Show</th>
-
                                     </tr>
                                 </thead>
-                                <tbody id="tbody">
-
+                                <tbody id="tbodys">
                                     @foreach ($users as $user)
                                         <tr>
-
 
                                             <td>
                                                 <input type="checkbox" name="selected_records[]" value="{{ $user->id }}"
@@ -103,82 +97,85 @@
                                                     {{ $user->status === 1 ? 'Inactive' : 'Active' }}
                                                 </a>
                                             </td>
-                                            <td> <a href="{{ url('useredit/' . $user->id) }}"><i
+                                            <td>
+                                                <a href="{{ url('useredit/' . $user->id) }}"><i
                                                         class="fa-solid fa-edit"></i></a>
-                                                |<a class='delete' onclick='return  ddelete()'
+                                                | <a class='delete'onclick='return checkdelete()'
                                                     href="{{ url('delete' . $user->id) }}"><i
                                                         class="fa-sharp fa-solid fa-trash"></i></a>
                                             </td>
-                                            <td> <a href="{{ url('user' . $user->id) }}"><i
-                                                        class="fa-solid fa-eye"></i></a>
+                                            <td>
+                                                <a href="{{ url('user' . $user->id) }}"><i class="fa-solid fa-eye"></i></a>
                                             </td>
                                         </tr>
                                         <!-- Add more data rows here as needed -->
                                     @endforeach
                                 </tbody>
 
-                        </table>
-                    </div>
+                            </table>
+
+                            <!-- Pagination -->
+                            <div class="row justify-content-center m-1" id="pagination">
+                                {{ $users->links('pagination::bootstrap-5') }}
+                            </div>
+
+                        </div>
+                    </form>
                 </div>
-            </div>
-        </div>
-    @endsection
-    @section('script')
-        
-        <script>
-            $(document).ready(function() {
-                $("#searchess").on("click", function() {
-                    var nameValue = $("#namesearch").val();
-                    var emailValue = $("#emailsearch").val();
-                    $.ajax({
-                        url: "{{ route('searches') }}",
-                        type: "GET",
-                        data: {
-                            'name': nameValue,
-                            'email': emailValue
-                        },
-                        success: function(data) {
-                            var users = data.users;
-                            var html = '';
+            @endsection
+            @section('home')
+                <script>
+                    $(document).ready(function() {
+                        $("#searchess").on("click", function() {
+                            var nameValue = $("#namesearch").val();
+                            var emailValue = $("#emailsearch").val();
+                            $.ajax({
+                                url: "{{ route('searches') }}",
+                                type: "GET",
+                                data: {
+                                    'name': nameValue,
+                                    'email': emailValue
+                                },
+                                success: function(data) {
+                                    var users = data.users;
+                                    var pagination = data.pagination;
+                                    var html = '';
 
-                            if (users.length > 0) {
-                                for (let i = 0; i < users.length; i++) {
-                                    html += '<tr>' +
-                                        '<td><input type="checkbox" class="user-checkbox" value="' +
-                                        users[i].id + '"></td>' +
-                                        '<td>' + users[i].id + '</td>' +
-                                        '<td>' + users[i].name + '</td>' +
-                                        '<td>' + users[i].email + '</td>' +
-                                        '<td>' + users[i].roll + '</td>' +
-                                        '<td>' +
-                                        '<a href="{{ url('userstatus') }}/' + users[i].id +
-                                        '" class="btn btn-' + (users[i].status === 1 ? 'danger' :
-                                            'success') + '">' +
-                                        (users[i].status === 1 ? 'Inactive' : 'Active') +
-                                        '</a>' +
-                                        '</td>' +
-                                        '<td>' +
-                                        '<a href="{{ url('user') }}/' + users[i].id +
-                                        '"><i class="fa-solid fa-edit"></i></a> | ' +
-                                        '<a class="delete" onclick="return delete()" href="{{ url('delete') }}/' +
-                                        users[i].id +
-                                        '"><i class="fa-sharp fa-solid fa-trash"></i></a>' +
-                                        '</td>' +
-                                        '<td>' +
-                                        '<a href="{{ url('user') }}/' + users[i].id +
-                                        '"><i class="fa-solid fa-eye"></i></a>' +
-                                        '</td>' +
-                                        '</tr>';
 
+                                    if (users.length > 0) {
+                                        for (let i = 0; i < users.length; i++) {
+                                            // Your code to display individual student data here
+                                            html += `<tr>
+                                                <td>
+                                           <input type="checkbox" class="user-checkbox" value="${users[i].id}">
+                                           </td>
+                            <td>${users[i].id}</td>
+                            <td>${users[i].name}</td>
+                            <td>${users[i].email}</td>
+                            <td>${users[i].roll}</td>
+                            <td>
+                                <a href="{{ url('userstatus') }}/${users[i].id}" class="btn btn-${users[i].status === 1 ? 'danger' : 'success'}">
+                                 ${users[i].status === 1 ? 'Inactive' : 'Active'}
+                                           </a>
+                            </td>
+                            <td>
+                                <a href="{{ url('useredit') }}/${users[i].id}"><i class="fa-solid fa-edit"></i></a>
+                                | <a class="deletes" onclick="return checkdelete()" href="{{ url('delete') }}/${users[i].id}">
+                                <i class="fa-sharp fa-solid fa-trash"></i></a>
+                            </td>
+                             <td> <a href="{{ url('user') }}${users[i].id}""><i class="fa-solid fa-eye"></i></a>
+                                     </td>               
+                        </tr>`;
+                                        }
+                                    } else {
+                                        html = '<tr><td colspan="4">No matching users found</td></tr>';
+                                    }
+
+                                    $("#tbodys").html(html);
+                                    $("#pagination").html(pagination);
                                 }
-                            } else {
-                                html = '<tr><td colspan="5">No matching users found</td></tr>';
-                            }
-
-                            $("#tbody").html(html);
-                        }
+                            });
+                        });
                     });
-                });
-            });
-        </script>
-    @endsection
+                </script>
+            @endsection

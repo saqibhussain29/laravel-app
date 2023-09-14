@@ -13,21 +13,13 @@
             <form class="example" action="{{ route('search') }}" method="get">
                 <div class="m-3">
                     <label for=""> Name</label>
-                    <input type="text" name="name" id="names" class="form-control" value="">
+                    <input type="text" name="name" id="names" class="form-control"value="{{ session('name', '') }}">
                 </div>
                 <div class="m-3">
                     <label for="">Father Name</label>
-                    <input type="text" name="father_name" id="father_names" class="form-control" value="">
+                    <input type="text" name="father_name" id="father_names" class="form-control" value="{{ session('father_name', '') }}">
                 </div>
-                {{-- <div class="m-3">
-                    <label for="">Class</label>
-                    <select class="form-select" name="class">
-                        <option selected disabled>select your class</option>
-                        <option value="1" {{ request('class') == 'one' ? 'selected' : '' }}>One</option>
-                        <option value="2" {{ request('class') == 'two' ? 'selected' : '' }}>Two</option>
-                        <option value="3" {{ request('class') == 'three' ? 'selected' : '' }}>Three</option>
-                    </select>
-                </div> --}}
+              
                 <div class="d-flex justify-content-end m-3">
                     <a href="{{ url('/home') }}" class="btn btn-primary m-2">RESET</a>
                     <button type="button" name="search" id="searchs" class="btn btn-primary m-2">search</button>
@@ -61,10 +53,13 @@
     <div class="row justify-content-center m-5">
         <div class="col-26">
             <div class="card shadow">
+                <form action="{{ route('student.deleteMultiple') }}" method="post">
+                    @csrf
                 <div class="table-responsive">
                     <table class="table table-bordered text-center align-middle mt-3">
                         <thead>
                             <tr>
+                                <th><button type="submit" class="btn btn-danger">Delete</button></th>
                                 <th scope="col">Student ID</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Father Name</th>
@@ -81,6 +76,10 @@
                         <tbody id="tbodys">
                             @foreach ($students as $student)
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_records[]" value="{{ $student->id }}"
+                                            class="checkbox">
+                                    </td>
                                     <td>{{ $student->id }}</td>
                                     <td>{{ $student->name }}</td>
                                     <td>{{ $student->father_name }}</td>
@@ -101,63 +100,82 @@
                                     <td> <a href="{{ url('detail' . $student->id) }}"><i class="fa-solid fa-eye"></i></a>
                                     </td>
                                 </tr>
+
                                 <!-- Add more data rows here as needed -->
                             @endforeach
-                        </tbody>
+                            </div>
+                        </tbody>  
 
                     </table>
+                    
+                <!-- Pagination -->
+                <div class="row justify-content-center m-1" id="pagination">
+                    {{ $students->links('pagination::bootstrap-5') }}
                 </div>
-            </div>
         </div>
+        </form>
     </div>
 @endsection
 @section('home')
     <script>
-        $(document).ready(function() {
-            $("#searchs").on("click", function() {
-                var nameValue = $("#names").val();
-                var fatherValue = $("#father_names").val();
-                $.ajax({
-                    url: "{{ route('search') }}",
-                    type: "GET",
-                    data: {
-                        'name': nameValue,
-                        'father_name': fatherValue
-                    },
-                    success: function(data) {
-                        var students = data.students;
-                        var html = '';
 
-                        if (students.length > 0) {
-                            for (let i = 0; i < students.length; i++) {
-                                html += `<tr>
-                                    <td> ${students[i].id}  </td>
-                                    <td> ${students[i].name}  </td>
-                                    <td> ${students[i].father_name}  </td>
-                                    <td> ${students[i].mother_name}  </td>
-                                    <td> ${students[i].class}  </td>
-                                    <td> ${students[i].address}  </td>
-                                    <td> ${students[i].school}  </td>
-                                    <td> ${students[i].contact}  </td>
-                                    <td><img src="{{asset('storage')}}/${students[i].image}" style="width: 50px; height: 60px;"></td>
-                                    <td>
-                    <a href="{{ url('show')}}${students[i].id}"><i class="fa-solid fa-edit"></i></a>
-                    | <a class="deletes" onclick="return checkdelete()" href="{{ url('deletes')}} ${students[i].id}">
-                    <i class="fa-sharp fa-solid fa-trash"></i></a>
-                    </td>
-                                    
-                 
- 
-                                </tr>`;
-                            }
-                        } else {
-                            html = '<tr><td colspan="4">No matching users found</td></tr>';
-                        }
+// var oldName = @json(old('name', ''));
+//         var oldFatherName = @json(old('father_name', ''));
 
-                        $("#tbodys").html(html);
+//         $("#names").val(oldName);
+//         $("#father_names").val(oldFatherName);
+
+$(document).ready(function() {
+    $("#searchs").on("click", function() {
+        var nameValue = $("#names").val();
+        var fatherNameValue = $("#father_names").val();
+        $.ajax({
+            url: "{{ route('search') }}",
+            type: "GET",
+            data: {
+                'name': nameValue,
+                'father_name': fatherNameValue
+            },
+            success: function(data) {
+                var students = data.students;
+                var pagination = data.pagination; // Get pagination data
+                var html = '';
+
+                if (students.length > 0) {
+                    for (let i = 0; i < students.length; i++) {
+                        // Your code to display individual student data here
+                        html += `<tr>
+                            <td>
+                                           <input type="checkbox" class="user-checkbox" value="${students[i].id}">
+                                           </td>
+                            <td>${students[i].id}</td>
+                            <td>${students[i].name}</td>
+                            <td>${students[i].father_name}</td>
+                            <td>${students[i].mother_name}</td>
+                            <td>${students[i].class}</td>
+                            <td>${students[i].address}</td>
+                            <td>${students[i].school}</td>
+                            <td>${students[i].contact}</td>
+                            <td><img src="{{ asset('storage') }}/${students[i].image}" style="width: 50px; height: 60px;"></td>
+                            <td>
+                                <a href="{{ url('show') }}/${students[i].id}"><i class="fa-solid fa-edit"></i></a>
+                                | <a class="deletes" onclick="return checkdelete()" href="{{ url('deletes') }}/${students[i].id}">
+                                <i class="fa-sharp fa-solid fa-trash"></i></a>
+                            </td>
+                             <td> <a href="{{ url('detail') }}${students[i].id}""><i class="fa-solid fa-eye"></i></a>
+                                     </td>               
+                        </tr>`;
                     }
-                });
-            });
+                } else {
+                    html = '<tr><td colspan="4">No matching users found</td></tr>';
+                }
+
+                $("#tbodys").html(html);
+                   $("#pagination").html(pagination);
+            }
         });
-    </script>
+    });
+});
+
+</script>
 @endsection

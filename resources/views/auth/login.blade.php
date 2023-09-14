@@ -43,6 +43,9 @@
                     @if ($errors->has('password'))
                         <p class="text-danger">{{ $errors->first('password') }}</p>
                     @endif
+                    @if (Session::has('errorsss'))
+                    <p class="text-danger">{{ session::get('errorsss') }}</p>
+                @endif
                 </div>
                 <div class="text-center m-5">
                     <input type="submit" name="submit" value="Login" class="btn btn-primary w-75">

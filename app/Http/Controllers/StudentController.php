@@ -63,18 +63,27 @@ class StudentController extends Controller
   public function search(Request $request)
   {
       $query = Student::query();
+      
+      $name = $request->input('name');
+      $fatherName = $request->input('father_name');
+      
+      session(['name' => $name]);
+      session(['father_name' => $fatherName]);
+  
+      
+      if ($name) {
+          $query->where('name', 'LIKE', '%' . $name . '%');
+      }
+  
+      if ($fatherName) {
+          $query->orWhere('father_name', 'LIKE', '%' . $fatherName . '%');
+      }
+  
+      $students = $query->paginate(3)->withQueryString();
   
       if ($request->ajax()) {
-          $search = $request->input('name'); // Assuming you're searching by name
-          $students = $query
-              ->where('name', 'LIKE', '%' . $search . '%')
-              ->orWhere('father_name', 'LIKE', '%' . $search . '%')
-              // ->orWhere('class', 'LIKE', '%' . $search . '%')
-              ->get();
-          return response()->json(['students' => $students]);
+          return response()->json(['students' => $students->items(), 'pagination' => $students->links('pagination::bootstrap-5')->toHtml()]);
       } else {
-          // Handle non-AJAX requests
-          $students = $query->get();
           return view('home', compact('students'));
       }
   }
@@ -155,6 +164,22 @@ class StudentController extends Controller
     session()->flash('success');
 
     return redirect('home');
+}
+
+public function deleteMultiple(Request $request)
+{
+    $selectedUserIds = $request->input('selected_records', []);
+
+    // Get the ID of the currently authenticated user
+    $currentUserId = auth()->user()->id;
+
+    // Remove the current user's ID from the list of selected IDs
+    $selectedUserIds = array_diff($selectedUserIds, [$currentUserId]);
+
+    // Delete the selected users
+    Student::whereIn('id', $selectedUserIds)->delete();
+
+    return redirect()->back()->with('hello', 'Selected users have been deleted.');
 }
 
 
